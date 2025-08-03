@@ -78,7 +78,7 @@ class TagAdmin(admin.ModelAdmin):
 class NovelAdmin(admin.ModelAdmin):
     list_display = ['title', 'get_work_display', 'tag_list', 'get_word_display', 'created_at']
     list_filter = ['original_work', 'tags', 'created_at']
-    search_fields = ['title', 'summary']
+    search_fields = ['title', 'summry']
     readonly_fields = ['created_at', 'updated_at']
     filter_horizontal = ['tags']
     

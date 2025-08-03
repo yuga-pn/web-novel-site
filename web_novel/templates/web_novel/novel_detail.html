@@ -11,24 +11,46 @@
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="novel-meta mb-2">
-                <strong>📚 原作：</strong>{{novel.work_name}}
+                <strong>📚 原作：</strong>
+                {% if novel.original_work %}
+                    {{novel.original_work.name}}
+                {% else %}
+                    {{novel.work_name|default:"未設定"}}
+                {% endif %}
             </div>
             <div class="novel-meta mb-2">
-                <strong>📊 総文字数：</strong>{{novel.word_num}}文字
+                <strong>📊 総文字数：</strong>
+                {% if novel.word_count %}
+                    {{novel.word_count|floatformat:0}}文字
+                {% else %}
+                    {{novel.word_num|default:"未設定"}}文字
+                {% endif %}
             </div>
         </div>
         <div class="col-md-6">
             <div class="mb-3">
                 <strong>🏷️ タグ：</strong><br>
-                <span class="tag-badge me-1 mb-1">{{novel.tag}}</span>
+                {% if novel.tags.all %}
+                    {% for tag in novel.tags.all %}
+                        <span class="tag-badge me-1 mb-1" style="background-color: {{tag.color}}; color: white; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-right: 8px; margin-bottom: 4px;">{{tag.name}}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="tag-badge me-1 mb-1">{{novel.tag|default:"タグなし"}}</span>
+                {% endif %}
             </div>
         </div>
     </div>
     
-    {% if novel.summry %}
+    {% if novel.summary or novel.summry %}
         <div class="detail-summary">
             <h5>📝 あらすじ</h5>
-            <p class="mb-0">{{novel.summry}}</p>
+            <p class="mb-0">
+            {% if novel.summary %}
+                {{novel.summary}}
+            {% else %}
+                {{novel.summry}}
+            {% endif %}
+            </p>
         </div>
     {% endif %}
     
@@ -55,10 +77,22 @@
                             </a>
                         </h6>
                         <div class="novel-meta mb-2">
-                            <small><strong>原作：</strong>{{related.work_name}}</small>
+                            <small><strong>原作：</strong>
+                            {% if related.original_work %}
+                                {{related.original_work.name}}
+                            {% else %}
+                                {{related.work_name|default:"未設定"}}
+                            {% endif %}
+                            </small>
                         </div>
                         <div class="novel-meta mb-2">
-                            <small><strong>文字数：</strong>{{related.word_num}}文字</small>
+                            <small><strong>文字数：</strong>
+                            {% if related.word_count %}
+                                {{related.word_count|floatformat:0}}文字
+                            {% else %}
+                                {{related.word_num|default:"未設定"}}文字
+                            {% endif %}
+                            </small>
                         </div>
                         <div class="mt-auto">
                             <a class="detail-btn btn-sm" href="{% url 'novel_detail' related.pk %}">

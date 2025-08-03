@@ -17,14 +17,30 @@
                 </a>
             </h3>
             <div class="novel-meta">
-                <strong>原作：</strong>{{nov.work_name}}
+                <strong>原作：</strong>
+                {% if nov.original_work %}
+                    {{nov.original_work.name}}
+                {% else %}
+                    {{nov.work_name|default:"未設定"}}
+                {% endif %}
             </div>
             <div class="novel-meta">
-                <strong>総文字数：</strong>{{nov.word_num}}文字
+                <strong>総文字数：</strong>
+                {% if nov.word_count %}
+                    {{nov.word_count|floatformat:0}}文字
+                {% else %}
+                    {{nov.word_num|default:"未設定"}}文字
+                {% endif %}
             </div>
             <div class="mb-3">
                 <strong>🏷️ タグ：</strong>
-                <span class="tag-badge">{{nov.tag}}</span>
+                {% if nov.tags.all %}
+                    {% for tag in nov.tags.all %}
+                        <span class="tag-badge" style="background-color: {{tag.color}}; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">{{tag.name}}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="tag-badge">{{nov.tag|default:"タグなし"}}</span>
+                {% endif %}
             </div>
             <div class="d-flex justify-content-end">
                 <a class="detail-btn" href="{% url 'novel_detail' nov.pk %}">
