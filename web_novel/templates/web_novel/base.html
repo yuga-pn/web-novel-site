@@ -1,0 +1,64 @@
+{% load django_bootstrap5 %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width,initial-scale=1.0">
+            <meta name=”description“ content=“ようこそ実力主義の教室へ、推しの子、ソードアートオンラインの二次創作まとめ。ハーメルンとpixivにあるおすすめの小説を載せています“ />
+        {% bootstrap_css %}
+        {% bootstrap_javascript %}
+        <link rel="stylesheet" href="{% static 'web_novel/style.css' %}">
+        <title>📖 よう実二次創作まとめ</title>
+        <meta name="google-site-verification" content="W-nks7VG2O35hRBwZs6gDPxNF6ZEij7OdSUU6sDcO1M" />
+        
+    </head>
+    <body>
+        <header>
+            <div class="header-image">
+                <img src="{% static "web_novel/header1.png" %}" class="img-fluid">
+            </div>
+            <div class="nav-section">
+                <div class="row g-0">
+                    <div class="col-md-3 text-center">
+                        <a class="nav-link text-decoration-none text-black d-block" href="{% url 'novel_list' %}">🏠 HOME</a>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <a class="nav-link text-decoration-none text-black d-block" href="{% url 'novel_list' %}?query=ようこそ実力主義の教室へ">📚 よう実</a>
+                    </div>
+                    <div class="col-md-6">
+                        <form action="{% url 'novel_list' %}" method="get" class="search-form">
+                            <input name="query" value="{{ request.GET.query }}" type="text" class="search-input" placeholder="小説を検索..." />
+                            <button type="submit" class="search-btn">🔍 検索</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="container main-container">
+            <div class="row">
+                <div class="col-lg-9 col-md-8">
+                    {% block content %}
+                    {% endblock content %}
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <div class="sidebar">
+                        <h4>📚 原作一覧</h4>
+                        <div class="d-grid gap-2">
+                            <a class="work-link" href="{% url 'novel_list' %}?query=ソードアートオンライン">
+                                ⚔️ ソードアートオンライン
+                            </a>
+                            <a class="work-link" href="{% url 'novel_list' %}?query=ようこそ実力主義の教室へ">
+                                🏫 ようこそ実力主義の教室へ
+                            </a>
+                            <a class="work-link" href="{% url 'novel_list' %}?query=推しの子">
+                                ⭐ 推しの子
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

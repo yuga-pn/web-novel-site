@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+{% extends "web_novel/base.html" %}
+{% block content%}
+
+{% for nov in novels %}
+    <div class="card w-100 mt-3 mx-auto">
+        <div class="card body">
+            <h3 ><a class="text-decoration-none text-black" href="{{nov.linked}}" target="_brank">{{nov.title}}</a></h3>
+            <h6 class="card-text ">原作：{{nov.work_name}}</h6>
+            <h6 class="card-text ">タグ：{{nov.tag}}</h6>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-dark" href="{% url "novel_detail" nov.pk %}">詳細</a>
+            </div>
+        </div>
+    </div>
+
+{% endfor %}
+{%endblock content%}
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+{% extends "web_novel/base.html" %}
+{% block content %}
+
+<div class="detail-card">
+    <h1 class="detail-title">
+        <a class="text-decoration-none" href="{{novel.linked}}" target="_blank">
+            📖 {{novel.title}}
+        </a>
+    </h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="novel-meta mb-2">
+                <strong>📚 原作：</strong>{{novel.work_name}}
+            </div>
+            <div class="novel-meta mb-2">
+                <strong>📊 総文字数：</strong>{{novel.word_num}}文字
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <strong>🏷️ タグ：</strong><br>
+                <span class="tag-badge me-1 mb-1">{{novel.tag}}</span>
+            </div>
+        </div>
+    </div>
+    
+    {% if novel.summry %}
+        <div class="detail-summary">
+            <h5>📝 あらすじ</h5>
+            <p class="mb-0">{{novel.summry}}</p>
+        </div>
+    {% endif %}
+    
+    <div class="text-center mt-4">
+        <a class="detail-btn btn-lg" href="{{novel.linked}}" target="_blank">
+            🚀 小説を読む
+        </a>
+    </div>
+</div>
+
+<h4 class="related-novels-title">
+    🔗 関連する小説
+</h4>
+
+{% if related_novels %}
+    <div class="row">
+        {% for related in related_novels %}
+            <div class="col-md-6 mb-3">
+                <div class="novel-card card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="novel-title mb-2">
+                            <a class="text-decoration-none" href="{{related.linked}}" target="_blank">
+                                📖 {{related.title|truncatechars:30}}
+                            </a>
+                        </h6>
+                        <div class="novel-meta mb-2">
+                            <small><strong>原作：</strong>{{related.work_name}}</small>
+                        </div>
+                        <div class="novel-meta mb-2">
+                            <small><strong>文字数：</strong>{{related.word_num}}文字</small>
+                        </div>
+                        <div class="mt-auto">
+                            <a class="detail-btn btn-sm" href="{% url 'novel_detail' related.pk %}">
+                                📚 詳細
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-4">
+        <p class="text-muted">関連する小説が見つかりませんでした</p>
+    </div>
+{% endif %}
+
+<div class="text-center mt-4">
+    <a href="{% url 'novel_list' %}" class="detail-btn">
+        🏠 一覧に戻る
+    </a>
+</div>
+
+{% endblock content %}
+
