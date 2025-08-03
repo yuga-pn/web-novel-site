@@ -11,3 +11,9 @@ services:
         value: 4
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings_production
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_EMAIL
+        value: admin@webnovel.com
+      - key: ADMIN_PASSWORD
+        value: WebNovel2024!
