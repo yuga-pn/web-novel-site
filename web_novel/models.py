@@ -77,6 +77,16 @@ class Novel(models.Model):
             return ", ".join([tag.name for tag in new_tags])
         return self.tag
     
+    def get_split_tags(self):
+        """従来タグフィールドを分割してリストで返す"""
+        if self.tag and self.tag.strip():
+            # カンマ、スペース、改行、全角スペースで分割
+            import re
+            tags = re.split(r'[,、\s\n　]+', self.tag.strip())
+            # 空文字を除去して返す
+            return [tag.strip() for tag in tags if tag.strip()]
+        return []
+    
     def get_summary(self):
         """あらすじを取得（新→従来の順で優先）"""
         return self.summary if self.summary else self.summry

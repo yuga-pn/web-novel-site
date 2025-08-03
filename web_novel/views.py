@@ -12,10 +12,43 @@ class NovelList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_query'] = self.request.GET.get("query", "")
+        context['tag_filter'] = self.request.GET.get("tag", "")
+        context['work_filter'] = self.request.GET.get("work", "")
         return context
     
     def get_queryset(self):
         query = self.request.GET.get("query")
+        tag_filter = self.request.GET.get("tag")
+        work_filter = self.request.GET.get("work")
+        
+        # ベースクエリセット
+        nov_list = Novel.objects.all().select_related('original_work').prefetch_related('tags')
+        
+        # 原作フィルター処理
+        if work_filter and work_filter.strip():
+            work_filter = work_filter.strip()
+            # 新しい原作システムと従来の原作システム両方で検索
+            work_q = models.Q(original_work__name__iexact=work_filter) | models.Q(work_name__icontains=work_filter)
+            nov_list = nov_list.filter(work_q).distinct()
+        
+        # タグフィルター処理
+        if tag_filter and tag_filter.strip():
+            tag_filter = tag_filter.strip()
+            # 新しいタグシステムでの完全一致検索
+            new_tag_q = models.Q(tags__name__iexact=tag_filter)
+            
+            # 従来タグシステムでの個別タグ検索
+            # カンマ、全角カンマ、スペース区切りのタグに対応
+            import re
+            # タグの境界を考慮した正規表現パターン
+            tag_pattern = r'(^|[,、\s　])' + re.escape(tag_filter) + r'([,、\s　]|$)'
+            legacy_tag_q = models.Q(tag__iregex=tag_pattern)
+            
+            # 両方のクエリを組み合わせ
+            tag_q = new_tag_q | legacy_tag_q
+            nov_list = nov_list.filter(tag_q).distinct()
+        
+        # 検索クエリ処理
         if query and query.strip():
             query = query.strip()
             # 従来フィールドでの検索（既存データとの互換性）
@@ -40,9 +73,8 @@ class NovelList(ListView):
             q_objects |= models.Q(summry__icontains=query)
             q_objects |= models.Q(summary__icontains=query)
             
-            nov_list = Novel.objects.filter(q_objects).distinct().select_related('original_work').prefetch_related('tags')
-        else:
-            nov_list = Novel.objects.all().select_related('original_work').prefetch_related('tags')
+            nov_list = nov_list.filter(q_objects).distinct()
+        
         return nov_list
     
     def relative_list(self,keywords):

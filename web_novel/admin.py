@@ -113,9 +113,11 @@ class NovelAdmin(admin.ModelAdmin):
     
     def get_word_display(self, obj):
         if obj.word_count:
+            # 数値を事前にフォーマットしてからformat_htmlに渡す
+            formatted_count = f"{obj.word_count:,}"
             return format_html(
-                '<span style="color: #4CAF50; font-weight: bold;">{:,} 文字</span>',
-                obj.word_count
+                '<span style="color: #4CAF50; font-weight: bold;">{} 文字</span>',
+                formatted_count
             )
         return format_html(
             '<span style="color: #757575;">{}</span>',

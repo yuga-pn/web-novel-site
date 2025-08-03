@@ -1,10 +1,24 @@
 {% extends "web_novel/base.html" %}
 {% block content %}
 
-{% if search_query %}
+{% if search_query or tag_filter or work_filter %}
     <div class="alert alert-info mb-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: none; border-radius: 12px;">
-        <h5 class="mb-2">🔍 検索結果</h5>
-        <p class="mb-0">「<strong>{{ search_query }}</strong>」の検索結果: {{ novels|length }} 件</p>
+        {% if work_filter %}
+            <h5 class="mb-2">📚 原作フィルター</h5>
+            <p class="mb-2">原作「<strong>{{ work_filter }}</strong>」の小説: {{ novels|length }} 件</p>
+            <a href="{% url 'novel_list' %}" class="btn btn-sm btn-outline-primary">
+                🔄 フィルターを解除
+            </a>
+        {% elif tag_filter %}
+            <h5 class="mb-2">🏷️ タグフィルター</h5>
+            <p class="mb-2">タグ「<strong>{{ tag_filter }}</strong>」の小説: {{ novels|length }} 件</p>
+            <a href="{% url 'novel_list' %}" class="btn btn-sm btn-outline-primary">
+                🔄 フィルターを解除
+            </a>
+        {% elif search_query %}
+            <h5 class="mb-2">🔍 検索結果</h5>
+            <p class="mb-0">「<strong>{{ search_query }}</strong>」の検索結果: {{ novels|length }} 件</p>
+        {% endif %}
     </div>
 {% endif %}
 
@@ -36,10 +50,20 @@
                 <strong>🏷️ タグ：</strong>
                 {% if nov.tags.all %}
                     {% for tag in nov.tags.all %}
-                        <span class="tag-badge" style="background-color: {{tag.color}}; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">{{tag.name}}</span>
+                        <a href="{% url 'novel_list' %}?tag={{tag.name|urlencode}}" class="text-decoration-none">
+                            <span class="tag-badge" style="background-color: {{tag.color}}; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">{{tag.name}}</span>
+                        </a>
                     {% endfor %}
                 {% else %}
-                    <span class="tag-badge">{{nov.tag|default:"タグなし"}}</span>
+                    {% if nov.tag %}
+                        {% for split_tag in nov.get_split_tags %}
+                            <a href="{% url 'novel_list' %}?tag={{split_tag|urlencode}}" class="text-decoration-none">
+                                <span class="tag-badge" style="background-color: #3498db; color: white; padding: 2px 6px; border-radius: 3px; margin-right: 5px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">{{split_tag}}</span>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <span class="tag-badge">タグなし</span>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="d-flex justify-content-end">

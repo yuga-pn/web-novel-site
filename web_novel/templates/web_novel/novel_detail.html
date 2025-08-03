@@ -32,10 +32,20 @@
                 <strong>🏷️ タグ：</strong><br>
                 {% if novel.tags.all %}
                     {% for tag in novel.tags.all %}
-                        <span class="tag-badge me-1 mb-1" style="background-color: {{tag.color}}; color: white; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-right: 8px; margin-bottom: 4px;">{{tag.name}}</span>
+                        <a href="{% url 'novel_list' %}?tag={{tag.name|urlencode}}" class="text-decoration-none">
+                            <span class="tag-badge me-1 mb-1" style="background-color: {{tag.color}}; color: white; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-right: 8px; margin-bottom: 4px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">{{tag.name}}</span>
+                        </a>
                     {% endfor %}
                 {% else %}
-                    <span class="tag-badge me-1 mb-1">{{novel.tag|default:"タグなし"}}</span>
+                    {% if novel.tag %}
+                        {% for split_tag in novel.get_split_tags %}
+                            <a href="{% url 'novel_list' %}?tag={{split_tag|urlencode}}" class="text-decoration-none">
+                                <span class="tag-badge me-1 mb-1" style="background-color: #3498db; color: white; padding: 4px 8px; border-radius: 6px; display: inline-block; margin-right: 8px; margin-bottom: 4px; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">{{split_tag}}</span>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <span class="tag-badge me-1 mb-1">タグなし</span>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>

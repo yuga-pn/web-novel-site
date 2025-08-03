@@ -46,15 +46,15 @@
                     <div class="sidebar">
                         <h4>📚 原作一覧</h4>
                         <div class="d-grid gap-2">
-                            <a class="work-link" href="{% url 'novel_list' %}?query=ソードアートオンライン">
-                                ⚔️ ソードアートオンライン
-                            </a>
-                            <a class="work-link" href="{% url 'novel_list' %}?query=ようこそ実力主義の教室へ">
-                                🏫 ようこそ実力主義の教室へ
-                            </a>
-                            <a class="work-link" href="{% url 'novel_list' %}?query=推しの子">
-                                ⭐ 推しの子
-                            </a>
+                            {% if original_works %}
+                                {% for work in original_works %}
+                                    <a class="work-link" href="{% url 'novel_list' %}?work={{work.name|urlencode}}">
+                                        📖 {{work.name}}
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted small">原作が登録されていません</p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
