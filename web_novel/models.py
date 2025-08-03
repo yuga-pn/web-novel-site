@@ -37,9 +37,9 @@ class Novel(models.Model):
     title = models.CharField(max_length=100, verbose_name="タイトル")
     
     # 既存フィールド（下位互換性のため保持）
-    work_name = models.CharField(max_length=50, verbose_name="原作名（従来）")
-    tag = models.TextField(verbose_name="タグ（従来）")
-    summry = models.TextField(verbose_name="あらすじ（従来）")
+    work_name = models.CharField(max_length=50, blank=True, default="", verbose_name="原作名（従来）")
+    tag = models.TextField(blank=True, default="", verbose_name="タグ（従来）")
+    summry = models.TextField(blank=True, default="", verbose_name="あらすじ（従来）")
     word_num = models.TextField(null=True, verbose_name="文字数（従来）")
     
     # 新しいフィールド（オプション）
@@ -86,6 +86,20 @@ class Novel(models.Model):
         if self.word_count:
             return str(self.word_count)
         return self.word_num or "0"
+    
+    def save(self, *args, **kwargs):
+        """保存時の処理"""
+        # 従来フィールドが空の場合は新しいフィールドから自動補完
+        if not self.work_name and self.original_work:
+            self.work_name = self.original_work.name
+        
+        if not self.summry and self.summary:
+            self.summry = self.summary
+        
+        if not self.word_num and self.word_count:
+            self.word_num = str(self.word_count)
+        
+        super().save(*args, **kwargs)
     
     class Meta:
         verbose_name = "小説"
